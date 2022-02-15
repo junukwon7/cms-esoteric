@@ -2,7 +2,8 @@
 [CMS](http://cms-dev.github.io/) 1.5.0dev0를 기반으로 작성되었으며, 1.4.rc1에서의 작동을 보장합니다.
 ![image](https://user-images.githubusercontent.com/48399106/154005905-b00f0298-b5a2-483f-b588-390c6ecd55fd.png)
 
-# Installation
+# umjunsik-lang-python 인터프리터 사용
+전반적으로 잘 작동하지만, 간헐적으로 0이 아닌 값을 리턴해 프로그램이 종료되는 이슈가 있습니다.
 ## CMS 설치 스크립트 수정
 CMS 설치 스크립트인 `cms/setup.py`를 본 repo의 것으로 대체하거나, [184번 줄](https://github.com/cms-dev/cms/blob/0401c5336b34b1731736045da4877fef11889274/setup.py#L184)에 다음과 같이 umlang을 추가합니다.
 
@@ -185,3 +186,48 @@ parser.add_argument("--source", type=str, default="", help="Source Code")
 opt = parser.parse_args()
 runtime.compilePath(opt.source)
 ```
+
+
+
+# umjunsik-lang-cc 컴파일러 사용
+```python3
+#!/usr/bin/env python3
+
+# Contest Management System - http://cms-dev.github.io/
+# Copyright © 2022 Junu Kwon <junukwon7@gmail.com>
+
+"""Umjunsik-lang v2 programming language definition."""
+
+from cms.grading import CompiledLanguage
+
+
+__all__ = ["Umlang2"]
+
+
+class Umlang2(CompiledLanguage):
+    """This defines the Umjunsik programming language, compiled with umcc (the
+    version available on the system) using the Umjunsik-lang v2 standard.
+
+    """
+
+    @property
+    def name(self):
+        """See Language.name."""
+        return "Umjunsik-lang 2"
+
+    @property
+    def source_extensions(self):
+        """See Language.source_extensions."""
+        return [".umm"]
+
+
+    def get_compilation_commands(self,
+                                 source_filenames, executable_filename,
+                                 for_evaluation=True):
+        """See Language.get_compilation_commands."""
+        command = ["/usr/bin/umcc"]
+        command += ["-o", executable_filename]
+        command += source_filenames
+        return [command]
+```
+
