@@ -78,20 +78,19 @@ class Umjunsik:
             error += 1
             if error == errors:
                 raise RecursionError(str(errorline+1) + '번째 줄에서 무한 루프가 감지되었습니다.')
+        return
 
     def compilePath(self, path):
-        with open(path) as file:
+        with open(path, 'rt', encoding='UTF8') as file:
             code = ''.join(file.readlines())
             self.compile(code)
+        return
+
+
 
 
 runtime = Umjunsik()
 parser = argparse.ArgumentParser()
 parser.add_argument("--source", type=str, default="", help="Source Code")
 opt = parser.parse_args()
-data = ""
-with open(opt.source, 'rt', encoding='UTF8') as file:
-    data = file.read()
-#print(data)
-runtime.compile(data)
-print("")
+runtime.compilePath(opt.source)
