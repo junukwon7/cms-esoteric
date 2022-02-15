@@ -1,5 +1,8 @@
 # umjunsik-lang의 CMS(Contest Management System)용 애드온입니다.
-[CMS](http://cms-dev.github.io/) 1.5.0dev0를 기반으로 작성되었으며, 1.4.rc1에서의 작동을 보장합니다. 설치 과정은 아래와 같습니다.
+[CMS](http://cms-dev.github.io/) 1.5.0dev0를 기반으로 작성되었으며, 1.4.rc1에서의 작동을 보장합니다.
+![image](https://user-images.githubusercontent.com/48399106/154005905-b00f0298-b5a2-483f-b588-390c6ecd55fd.png)
+
+# Installation
 ## CMS 설치 스크립트 수정
 CMS 설치 스크립트인 `cms/setup.py`를 본 repo의 것으로 대체하거나, [184번 줄](https://github.com/cms-dev/cms/blob/0401c5336b34b1731736045da4877fef11889274/setup.py#L184)에 다음과 같이 umlang을 추가합니다.
 
