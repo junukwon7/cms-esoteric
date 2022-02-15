@@ -190,6 +190,7 @@ runtime.compilePath(opt.source)
 
 
 # umjunsik-lang-cc 컴파일러 사용
+CMS의 인코딩 문제로 인해 컴파일에 실패하는 이슈가 있습니다.
 ```python3
 #!/usr/bin/env python3
 
