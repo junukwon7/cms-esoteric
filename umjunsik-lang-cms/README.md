@@ -1,11 +1,9 @@
-# umjunsik-lang의 CMS(Contest Management System)용 애드온입니다.
+# 엄준식(umjunsik-lang)의 CMS(Contest Management System)용 애드온입니다.
 [CMS](http://cms-dev.github.io/) 1.5.0dev0를 기반으로 작성되었으며, 1.4.rc1에서의 작동을 보장합니다. </br>
 
 ![image](https://user-images.githubusercontent.com/48399106/154005905-b00f0298-b5a2-483f-b588-390c6ecd55fd.png)
 
-# umjunsik-lang-python 인터프리터 사용
-전반적으로 잘 작동하지만, 간헐적으로 0이 아닌 값을 리턴해 프로그램이 종료되는 이슈가 있습니다.
-## CMS 설치 스크립트 수정
+# CMS 설치 스크립트 수정
 CMS 설치 스크립트인 `cms/setup.py`를 본 repo의 것으로 대체하거나, [184번 줄](https://github.com/cms-dev/cms/blob/0401c5336b34b1731736045da4877fef11889274/setup.py#L184)에 다음과 같이 umlang을 추가합니다.
 
 ```python3
@@ -27,7 +25,100 @@ CMS 설치 스크립트인 `cms/setup.py`를 본 repo의 것으로 대체하거�
 ```
 이후 수정사항을 반영하기 위해서 `python3 setup.py install` 작업이 필요합니다.
 
-## 엄랭 grader 설정
+# umjunsik-lang-cc 컴파일러 사용 (권장)
+소스코드의 마지막 줄에 EOF(엔터)가 있어야 하며 아닌 경우 실행되지 않습니다. umjunsik-lang-cc의 제작자 분께서 의도하신 부분인지는 모르겠으나, Grader 설정에서 개행을 추가하도록 하면 회피할 수 있습니다.
+
+## 엄준식 컴파일러 설치
+[엄준식 컴파일러](https://github.com/rycont/umjunsik-lang/tree/master/umjunsik-lang-cc)를 cmake를 사용해 `/usr/bin/umcc`에 설치합니다.
+
+## 엄준식 grader 설정
+아래 내용을 `cms/cms/grading/languages/umlang2.py`에 저장합니다.
+```python3
+#!/usr/bin/env python3
+
+# Contest Management System - http://cms-dev.github.io/
+# Copyright © 2022 Junu Kwon <junukwon7@gmail.com>
+
+"""Umjunsik-lang v2 programming language definition."""
+
+from cms.grading import CompiledLanguage
+
+
+__all__ = ["Umlang2"]
+
+
+class Umlang2(CompiledLanguage):
+    """This defines the Umjunsik programming language, compiled with umcc (the
+    version available on the system) using the Umjunsik-lang v2 standard.
+
+    """
+
+    @property
+    def name(self):
+        """See Language.name."""
+        return "Umjunsik-lang 2"
+
+    @property
+    def source_extensions(self):
+        """See Language.source_extensions."""
+        return [".umm"]
+
+
+    def get_compilation_commands(self,
+                                 source_filenames, executable_filename,
+                                 for_evaluation=True):
+        """See Language.get_compilation_commands."""
+
+
+        command = ["/usr/bin/umcc"]
+        command += ["-o", executable_filename]
+        command += source_filenames
+        return [command]
+        
+        """강제로 EOF를 생성하려면 아래 부분을 주석 해제하세요"""
+        # encode = ["/usr/bin/umcode.py"]
+        # encode += ["--src", source_filenames[0]]
+        # return [encode, command]
+```
+이후 수정사항을 반영하기 위해서 `python3 setup.py install` 작업이 필요합니다.
+
+## 강제 EOF 생성
+아래 내용을 `/usr/bin/umcode.py`에 저장합니다.
+```python3
+#!/usr/bin/env python3
+
+# Contest Management System - http://cms-dev.github.io/
+# Copyright © 2022 Junu Kwon <junukwon7@gmail.com>
+
+"""Umjunsik-lang v2 programming language for cms."""
+"""For Korean Umjunsik-lang encoding and decoding"""
+
+import base64
+import argparse
+import os
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--src", type=str, default="", help="Source Code")
+opt = parser.parse_args()
+
+code = ''
+with open(opt.src, 'rt') as file:
+            code = ''.join(file.readlines())
+
+os.remove(opt.src)
+
+fout = open(opt.src,'w', encoding='utf8')
+
+for line in code:
+    print(line, file=fout, end="")
+
+print("", file=fout)
+```
+
+# umjunsik-lang-python 인터프리터 사용
+전반적으로 잘 작동하지만, 간헐적으로 0이 아닌 값을 리턴해 프로그램이 종료되는 이슈가 있습니다.
+
+## 엄준식 grader 설정
 아래 내용을 `cms/cms/grading/languages/umlang2.py`에 저장합니다.
 ```python3
 #!/usr/bin/env python3
@@ -85,7 +176,7 @@ class Umlang2(Language):
 이후 수정사항을 반영하기 위해서 `python3 setup.py install` 작업이 필요합니다.
 
 ## 엄랭 인터프리터 설정
-아래 내용을 `/usr/bin/umlang_runtime.py`에 저장합니다. 아래 예시는 [sangchoo1201](https://github.com/sangchoo1201)님의 [Python umjunsik-lang 구현체](https://github.com/rycont/umjunsik-lang/blob/master/umjunsik-lang-python/runtime.py)를 기반으로 작성했으나, 다른 방식의 구현 역시 가능합니다.
+아래 내용을 `/usr/bin/umlang_runtime.py`에 저장합니다. 아래 예시는 [Python umjunsik-lang 구현체](https://github.com/rycont/umjunsik-lang/blob/master/umjunsik-lang-python/runtime.py)를 기반으로 작성했으나, 다른 방식의 구현 역시 가능합니다.
 ```python3
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
@@ -186,50 +277,5 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--source", type=str, default="", help="Source Code")
 opt = parser.parse_args()
 runtime.compilePath(opt.source)
-```
-
-
-
-# umjunsik-lang-cc 컴파일러 사용
-CMS의 인코딩 문제로 인해 컴파일에 실패하는 이슈가 있습니다.
-```python3
-#!/usr/bin/env python3
-
-# Contest Management System - http://cms-dev.github.io/
-# Copyright © 2022 Junu Kwon <junukwon7@gmail.com>
-
-"""Umjunsik-lang v2 programming language definition."""
-
-from cms.grading import CompiledLanguage
-
-
-__all__ = ["Umlang2"]
-
-
-class Umlang2(CompiledLanguage):
-    """This defines the Umjunsik programming language, compiled with umcc (the
-    version available on the system) using the Umjunsik-lang v2 standard.
-
-    """
-
-    @property
-    def name(self):
-        """See Language.name."""
-        return "Umjunsik-lang 2"
-
-    @property
-    def source_extensions(self):
-        """See Language.source_extensions."""
-        return [".umm"]
-
-
-    def get_compilation_commands(self,
-                                 source_filenames, executable_filename,
-                                 for_evaluation=True):
-        """See Language.get_compilation_commands."""
-        command = ["/usr/bin/umcc"]
-        command += ["-o", executable_filename]
-        command += source_filenames
-        return [command]
 ```
 
