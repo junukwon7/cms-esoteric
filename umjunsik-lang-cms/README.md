@@ -3,7 +3,7 @@
 
 ![image](https://user-images.githubusercontent.com/48399106/154005905-b00f0298-b5a2-483f-b588-390c6ecd55fd.png)
 
-# CMS 설치 스크립트 수정
+# 1. CMS 설치 스크립트 수정
 CMS 설치 스크립트인 `cms/setup.py`를 본 repo의 것으로 대체하거나, [184번 줄](https://github.com/cms-dev/cms/blob/0401c5336b34b1731736045da4877fef11889274/setup.py#L184)에 다음과 같이 umlang을 추가합니다.
 
 ```python3
@@ -25,13 +25,13 @@ CMS 설치 스크립트인 `cms/setup.py`를 본 repo의 것으로 대체하거�
 ```
 이후 수정사항을 반영하기 위해서 `python3 setup.py install` 작업이 필요합니다.
 
-# umjunsik-lang-cc 컴파일러 사용 (권장)
-소스코드의 마지막 줄에 EOF(엔터)가 있어야 하며 아닌 경우 실행되지 않습니다. umjunsik-lang-cc의 제작자 분께서 의도하신 부분인지는 모르겠으나, Grader 설정에서 개행을 추가하도록 하면 회피할 수 있습니다.
+# 2. umjunsik-lang-cc 컴파일러 사용 (권장)
 
-## 엄준식 컴파일러 설치
+
+## 2.1. 엄준식 컴파일러 설치
 [엄준식 컴파일러](https://github.com/rycont/umjunsik-lang/tree/master/umjunsik-lang-cc)를 cmake를 사용해 `/usr/bin/umcc`에 설치합니다.
 
-## 엄준식 grader 설정
+## 2.2. 엄준식 grader 설정
 아래 내용을 `cms/cms/grading/languages/umlang2.py`에 저장합니다.
 ```python3
 #!/usr/bin/env python3
@@ -82,7 +82,8 @@ class Umlang2(CompiledLanguage):
 ```
 이후 수정사항을 반영하기 위해서 `python3 setup.py install` 작업이 필요합니다.
 
-## 강제 EOF 생성
+## 2.3. 강제 EOF 생성
+위 설정만을 했을 시 소스코드의 마지막 줄에 EOF(엔터)가 있어야 하며 아닌 경우 컴파일 에러가 발생합니다. umjunsik-lang-cc의 제작자 분께서 의도하신 부분인지는 모르겠으나, Grader 설정에서 개행을 추가하도록 하면 회피할 수 있습니다.<\br>
 아래 내용을 `/usr/bin/umcode.py`에 저장합니다.
 ```python3
 #!/usr/bin/env python3
@@ -115,10 +116,10 @@ for line in code:
 print("", file=fout)
 ```
 
-# umjunsik-lang-python 인터프리터 사용
+# 3. umjunsik-lang-python 인터프리터 사용
 전반적으로 잘 작동하지만, 간헐적으로 0이 아닌 값을 리턴해 프로그램이 종료되는 이슈가 있습니다.
 
-## 엄준식 grader 설정
+## 3.1. 엄준식 grader 설정
 아래 내용을 `cms/cms/grading/languages/umlang2.py`에 저장합니다.
 ```python3
 #!/usr/bin/env python3
@@ -175,7 +176,7 @@ class Umlang2(Language):
 ```
 이후 수정사항을 반영하기 위해서 `python3 setup.py install` 작업이 필요합니다.
 
-## 엄랭 인터프리터 설정
+## 3.2. 엄랭 인터프리터 설정
 아래 내용을 `/usr/bin/umlang_runtime.py`에 저장합니다. 아래 예시는 [Python umjunsik-lang 구현체](https://github.com/rycont/umjunsik-lang/blob/master/umjunsik-lang-python/runtime.py)를 기반으로 작성했으나, 다른 방식의 구현 역시 가능합니다.
 ```python3
 #!/usr/bin/env python3
