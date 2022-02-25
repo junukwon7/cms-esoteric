@@ -83,7 +83,9 @@ class Umlang2(CompiledLanguage):
 이후 수정사항을 반영하기 위해서 `python3 setup.py install` 작업이 필요합니다.
 
 ## 2.3. 강제 EOF 생성
-위 설정만을 했을 시 소스코드의 마지막 줄에 EOF(엔터)가 있어야 하며 아닌 경우 컴파일 에러가 발생합니다. umjunsik-lang-cc의 제작자 분께서 의도하신 부분인지는 모르겠으나, Grader 설정에서 개행을 추가하도록 하면 회피할 수 있습니다.<\br>
+위 설정만을 했을 시 소스코드의 마지막 줄에 EOF(엔터)가 있어야 하며 아닌 경우 컴파일 에러가 발생합니다. umjunsik-lang-cc의 제작자 분께서 의도하신 부분인지는 모르겠으나, Grader 설정에서 개행을 추가하도록 하면 회피할 수 있습니다.
+
+
 아래 내용을 `/usr/bin/umcode.py`에 저장합니다.
 ```python3
 #!/usr/bin/env python3
